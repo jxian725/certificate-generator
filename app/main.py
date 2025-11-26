@@ -13,7 +13,8 @@ app = FastAPI()
 origins = [
     "http://127.0.0.1:5500",
     "http://188.239.13.84:80",
-    "http://188.239.13.84:443"
+    "http://188.239.13.84:443",
+    "http://188.239.13.84:8000"
 ]
 
 app.add_middleware(
@@ -23,6 +24,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.options("/participant/query")
+async def options_handler(request: Request):
+    return {}
 
 @app.post("/participant/query")
 async def query_participant(filters: ParticipantQuery, db: Session = Depends(get_db)):
