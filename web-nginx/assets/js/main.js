@@ -97,7 +97,7 @@
 					} else {
 						queryPayload = `{"country":"${country}","name":"${query}"}`;	
 					}
-					fetch("http://188.239.13.84:8000/participant/query", {
+					fetch("http://188.239.13.84/api/participant/query", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
