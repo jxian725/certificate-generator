@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from uuid import uuid4
 from datetime import datetime
@@ -8,6 +9,20 @@ from .obs_client import upload_file
 from .models import ParticipantQuery, Participant
 
 app = FastAPI()
+
+origins = [
+    "http://127.0.0.1:5500/",
+    "http://188.239.13.84:80/",
+    "http://188.239.13.84:443/"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/participant/query")
 async def query_participant(filters: ParticipantQuery, db: Session = Depends(get_db)):
