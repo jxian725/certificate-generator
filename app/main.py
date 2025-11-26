@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from uuid import uuid4
-
+from datetime import datetime
 from .db import get_db, Participant
 from .pdf_generator import generate_certificate
 from .obs_client import upload_file
@@ -36,7 +36,8 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
 
     # Save results to DB
     participant.cert_no = cert_no
-    participant.cert_url = pdf_url
+    participant.pdf_url = pdf_url
+    participant.issued_at = datetime.now()
     db.commit()
 
     return {

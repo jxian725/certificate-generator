@@ -36,32 +36,30 @@ def generate_certificate(name: str, cert_no: str, cert_type: str) -> bytes:
     else:
         TEMPLATE_PATH = PARTICIPATION_TEMPLATE_PATH
 
-    # 1. Load template
     img = Image.open(TEMPLATE_PATH).convert("RGB")
     draw = ImageDraw.Draw(img)
 
-    # 2. Load font
     name_font = ImageFont.truetype(FONT_PATH, 45)
     cert_font = ImageFont.truetype(FONT_PATH, 21)
 
-    # 3. Place Name (center)
     name_w, name_h = draw.textbbox((0, 0), name, font=name_font)[2:]
     img_width, img_height = img.size
     draw.text(((img_width - name_w) / 2, img_height * 0.55), name, fill="black", font=name_font)
 
-    # 4. Place certificate number
     draw.text((img_width * 0.19, img_height * 0.85), f"{cert_no}", fill="gray", font=cert_font)
 
-    # 5. Convert template to image buffer
     img_buffer = io.BytesIO()
     img.save(img_buffer, format="PNG")
     img_buffer.seek(0)
 
-    # ---- CREATE PDF ----
     pdf_buffer = io.BytesIO()
     c = canvas.Canvas(pdf_buffer, pagesize=landscape(A4))
-    width, height = landscape(A4)
 
+    c.setTitle(f"Certificate - {name}")
+    c.setAuthor("Huawei Developer Competition Committee")
+    c.setSubject(f"Certification No. {cert_no}")
+
+    width, height = landscape(A4)
     c.drawImage(ImageReader(img_buffer), 0, 0, width=width, height=height)
     c.save()
 
