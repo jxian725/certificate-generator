@@ -11,9 +11,9 @@ from .models import ParticipantQuery, Participant
 app = FastAPI()
 
 origins = [
-    "http://127.0.0.1:5500/",
-    "http://188.239.13.84:80/",
-    "http://188.239.13.84:443/"
+    "http://127.0.0.1:5500",
+    "http://188.239.13.84:80",
+    "http://188.239.13.84:443"
 ]
 
 app.add_middleware(
