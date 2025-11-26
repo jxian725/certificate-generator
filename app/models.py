@@ -1,5 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Boolean, DateTime, Integer
+from sqlalchemy import Column, String, Boolean, DateTime, Integer
+from pydantic import BaseModel
 from datetime import datetime
 
 class Base(DeclarativeBase):
@@ -8,9 +9,20 @@ class Base(DeclarativeBase):
 class Participant(Base):
     __tablename__ = "participants"
 
-    id: Mapped[str] = mapped_column(String(40), primary_key=True)
-    name: Mapped[str] = mapped_column(String(255))
-    cert_type: Mapped[str] = mapped_column(String(255))
-    cert_no: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    pdf_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    issued_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=True)
+    cert_no = Column(String(20), nullable=True)
+    pdf_url = Column(String(255), nullable=True)
+    issued_at = Column(DateTime, nullable=True)
+    cert_type = Column(String(50), nullable=False)
+    huawei_id = Column(String(100), nullable=True)
+    country = Column(String(50), nullable=False)
+    entity = Column(String(255), nullable=True)
+
+class ParticipantQuery(BaseModel):
+    name: str | None = None
+    email: str | None = None
+    accountId: str | None = None
+    country: str | None = None
+    

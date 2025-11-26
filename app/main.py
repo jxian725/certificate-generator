@@ -2,11 +2,42 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from uuid import uuid4
 from datetime import datetime
-from .db import get_db, Participant
+from .db import get_db
 from .pdf_generator import generate_certificate
 from .obs_client import upload_file
+from .models import ParticipantQuery, Participant
 
 app = FastAPI()
+
+@app.post("/participant/query")
+async def query_participant(filters: ParticipantQuery, db: Session = Depends(get_db)):
+    # Ensure at least one identifier exists
+    if not any([filters.name, filters.email, filters.accountId]):
+        raise HTTPException(status_code=400, detail="Provide name, email, or accountId")
+
+    db_query = db.query(Participant).filter(Participant.country == filters.country)
+
+    if filters.email:
+        db_query = db_query.filter(Participant.email == filters.email)
+    elif filters.name:
+        db_query = db_query.filter(Participant.name == filters.name)
+    elif filters.accountId:
+        db_query = db_query.filter(Participant.huawei_id == filters.accountId)
+
+    result = db_query.first()
+
+    if not result:
+        return {"status": "not_found", "message": "No matching record found"}
+
+    return {
+        "status": "success",
+        "data": {
+            "id": result.id,
+            "name": result.name,
+            "country": result.country,
+            "entity": result.entity
+        }
+    }
 
 @app.post("/generate/{participant_id}")
 async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
