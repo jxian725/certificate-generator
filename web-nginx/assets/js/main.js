@@ -104,31 +104,39 @@
 						},
 						body: queryPayload,
 					}).then(response => response.json()).then(result => {
-						console.log("Success:", result);
+						if (result.status === "success") {
+							getCertificate(result.data);
+						} else {
+							$message._show('failure', 'No matching result found.');
+							$submit.disabled = false;
+							return;
+						}
 					}).catch(error => {
 						console.error("Error:", error);
+						$message._show('failure', 'Error. Please try again later.');
+						$submit.disabled = false;
+						return;
 					});
-					console.log(queryPayload);
 				}
 			}
-
-
-
-			// Process form.
-			// but there's enough here to piece together a working AJAX submission call that does.
-			window.setTimeout(function() {
-
-				// Reset form.
-				//$form.reset();
-
-				// Enable submit.
-				$submit.disabled = false;
-
-				// Show message.
-				$message._show('success', 'Thank you!');
-				//$message._show('failure', 'Something went wrong. Please try again.');
-			}, 750);
 		});
+
+		function getCertificate(args){
+			fetch(`http://188.239.13.84/api/generate/${args.id}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}).then(response => response.json()).then(result => {
+				console.log("Success:", result);
+				console.log(result.url);
+			}).catch(error => {
+				console.error("Error:", error);
+				$message._show('failure', 'Error. Please try again later.');
+				$submit.disabled = false;
+				return;
+			});
+		}
 	})();
 
 	(function(){
