@@ -58,7 +58,8 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
             "message": "Certificate already generated",
             "name": participant.name,
             "cert_no": participant.cert_no,
-            "url": participant.pdf_url
+            "url": participant.pdf_url,
+            "blob": participant.cert_blob
         }
 
     # Generate cert serial
@@ -85,7 +86,7 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {
-        "id": participant.id,
+        "message": "Certificate generated successfully",
         "name": participant.name,
         "cert_no": cert_no,
         "url": pdf_url,
