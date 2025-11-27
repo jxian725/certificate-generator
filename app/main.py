@@ -8,6 +8,7 @@ from .db import get_db
 from .pdf_generator import generate_certificate
 from .obs_client import upload_file
 from .models import ParticipantQuery, Participant
+import base64
 
 app = FastAPI()
 
@@ -54,12 +55,13 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
 
     # If cert already exists, return saved one
     if participant.pdf_url:
+        image_base64 = base64.b64encode(participant.cert_blob).decode("utf-8")
         return {
             "message": "Certificate already generated",
             "name": participant.name,
             "cert_no": participant.cert_no,
             "url": participant.pdf_url,
-            "blob": participant.cert_blob
+            "blob": image_base64
         }
 
     # Generate cert serial
@@ -73,6 +75,7 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
     img_byte_arr = BytesIO()
     images[0].save(img_byte_arr, format='PNG')
     img_bytes = img_byte_arr.getvalue()
+    image_base64 = base64.b64encode(img_bytes).decode("utf-8")
 
     # Upload PDF to OBS
     object_name = f"certificates/{cert_no}.pdf"
@@ -90,5 +93,5 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
         "name": participant.name,
         "cert_no": cert_no,
         "url": pdf_url,
-        "blob": img_bytes
+        "blob": image_base64
     }
