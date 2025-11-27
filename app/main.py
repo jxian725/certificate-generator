@@ -1,31 +1,15 @@
 from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.middleware.cors import CORSMiddleware
+from pdf2image import convert_from_bytes
 from sqlalchemy.orm import Session
 from uuid import uuid4
 from datetime import datetime
+from io import BytesIO
 from .db import get_db
 from .pdf_generator import generate_certificate
 from .obs_client import upload_file
 from .models import ParticipantQuery, Participant
 
 app = FastAPI()
-
-origins = [
-    "http://127.0.0.1:5500",
-    "http://188.239.13.84",
-    "http://188.239.13.84/",
-    "http://188.239.13.84:80",
-    "http://188.239.13.84:443",
-    "http://188.239.13.84:8000"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 @app.options("/participant/query")
 async def options_handler(request: Request):
@@ -83,6 +67,12 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
     # Create PDF
     pdf_bytes = generate_certificate(participant.name, cert_no, participant.cert_type)
 
+    # PDF to IMG
+    images = convert_from_bytes(pdf_bytes)
+    img_byte_arr = BytesIO()
+    images[0].save(img_byte_arr, format='PNG')
+    img_bytes = img_byte_arr.getvalue()
+
     # Upload PDF to OBS
     object_name = f"certificates/{cert_no}.pdf"
     pdf_url = upload_file(pdf_bytes, object_name)
@@ -90,6 +80,7 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
     # Save results to DB
     participant.cert_no = cert_no
     participant.pdf_url = pdf_url
+    participant.cert_blob = img_bytes
     participant.issued_at = datetime.now()
     db.commit()
 
@@ -97,5 +88,6 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
         "id": participant.id,
         "name": participant.name,
         "cert_no": cert_no,
-        "url": pdf_url
+        "url": pdf_url,
+        "blob": img_bytes
     }

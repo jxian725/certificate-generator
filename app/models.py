@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Column, String, Boolean, DateTime, Integer
+from sqlalchemy import Column, String, Boolean, DateTime, Integer, LargeBinary
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -19,6 +19,7 @@ class Participant(Base):
     huawei_id = Column(String(100), nullable=True)
     country = Column(String(50), nullable=False)
     entity = Column(String(255), nullable=True)
+    cert_blob = Column(LargeBinary, nullable=True)
 
 class ParticipantQuery(BaseModel):
     name: str | None = None
