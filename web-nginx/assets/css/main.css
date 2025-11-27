@@ -997,7 +997,65 @@ button,
   color: white;
 }
 
-.modal-body {padding: 2px 16px; max-height: 75vh; overflow-y: auto;}
+.modal-body {
+  padding: 2px 16px; 
+  max-height: 75vh; 
+  overflow-y: auto;
+}
+
+#certModal .modal-body {
+  max-height: 90vh; 
+  overflow-y: auto;
+  text-align: center;
+}
+
+#cert-frame{
+  height: auto;
+  width: auto;
+  border: none;
+}
+
+#certModal .action-bar {
+  position: absolute;
+  right: 0;
+  top: 30%;
+  background-color: #0000004a;
+  border-radius: 12px 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 0px 5px 0px;
+}
+
+#certModal .action-bar>img {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  animation: blinker 2s linear infinite;
+}
+
+#certModal .action-bar>label {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: small;
+  margin: 2px 0px 0px 0px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1600px) {
+  #cert-frame {
+    width: auto;
+    height: calc(90vh - 32px);
+  }
+} 
+
+@media screen and (max-width: 900px) {
+  #cert-frame {
+    width: 100%;
+    height: auto;
+  }
+} 
 
 /* Add Animation */
 @-webkit-keyframes slideIn {
@@ -1018,4 +1076,10 @@ button,
 @keyframes fadeIn {
   from {opacity: 0} 
   to {opacity: 1}
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }

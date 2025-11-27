@@ -126,11 +126,15 @@
 			let span = document.getElementsByClassName("certClose")[0];
 			span.onclick = function() {
 				modal.style.display = "none";
+				document.getElementById("cert-frame").src = "";
+				document.getElementById("download-icon").alt = "";
 			}
 
 			window.onclick = function(event) {
 				if (event.target == modal) {
 					modal.style.display = "none";
+					document.getElementById("cert-frame").src = "";
+					document.getElementById("download-icon").alt = "";
 				}
 			}
 			fetch(`http://188.239.13.84/api/generate/${args.id}`, {
@@ -139,17 +143,29 @@
 					"Content-Type": "application/json",
 				},
 			}).then(response => response.json()).then(result => {
-				document.getElementById("cert-frame").src = result.url;
+				let objectURL = `data:image/png;base64,${result.blob}`;
+				document.getElementById("cert-frame").src = objectURL;
+				document.getElementById("download-icon").alt = result.url;
 				$message._show('success', 'Certificate generated successfully.');
 				$submit.disabled = false;
 				modal.style.display = "block";
 				return;
 			}).catch(error => {
 				console.error("Error:", error);
-				$message._show('failure', 'Error. Please try again later.');
+				$message._show('failure', 'Error. Please try again later2.');
 				$submit.disabled = false;
 				return;
 			});
+
+			let downloadBar = document.querySelectorAll('#certModal .action-bar')[0];
+			downloadBar.onclick = function() {
+				const a = document.createElement('a');
+				a.href = document.getElementById("download-icon").alt;
+				a.download = (a.href).split('/').pop();
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			}
 		}
 	})();
 
