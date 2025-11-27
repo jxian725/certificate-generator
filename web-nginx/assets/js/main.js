@@ -97,7 +97,7 @@
 					} else {
 						queryPayload = `{"country":"${country}","name":"${query}"}`;	
 					}
-					fetch("http://188.239.13.84/api/participant/query", {
+					fetch("/api/participant/query", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -137,7 +137,7 @@
 					document.getElementById("download-icon").alt = "";
 				}
 			}
-			fetch(`http://188.239.13.84/api/generate/${args.id}`, {
+			fetch(`/api/generate/${args.id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
