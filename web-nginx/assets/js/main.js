@@ -122,14 +122,28 @@
 		});
 
 		function getCertificate(args){
+			let modal = document.getElementById("certModal");
+			let span = document.getElementsByClassName("certClose")[0];
+			span.onclick = function() {
+				modal.style.display = "none";
+			}
+
+			window.onclick = function(event) {
+				if (event.target == modal) {
+					modal.style.display = "none";
+				}
+			}
 			fetch(`http://188.239.13.84/api/generate/${args.id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 			}).then(response => response.json()).then(result => {
-				console.log("Success:", result);
-				console.log(result.url);
+				document.getElementById("cert-frame").src = result.url;
+				$message._show('success', 'Certificate generated successfully.');
+				$submit.disabled = false;
+				modal.style.display = "block";
+				return;
 			}).catch(error => {
 				console.error("Error:", error);
 				$message._show('failure', 'Error. Please try again later.');
