@@ -6,6 +6,7 @@ import io
 import datetime
 
 PARTICIPATION_TEMPLATE_PATH = "templates/participation-template.png"
+PARTICIPATION_NAF_TEMPLATE_PATH = "templates/participation-template-naf.png"
 FINANCE_CHAMPION_TEMPLATE_PATH = "templates/finance-champion-template.png"
 FINANCE_1ST_TEMPLATE_PATH = "templates/finance-first-runner-template.png"
 FINANCE_2ND_TEMPLATE_PATH = "templates/finance-second-runner-template.png"
@@ -19,6 +20,8 @@ def generate_certificate(name: str, cert_no: str, cert_type: str) -> bytes:
 
     if cert_type == "participant":
         TEMPLATE_PATH = PARTICIPATION_TEMPLATE_PATH
+    elif cert_type == "participant-naf":
+        TEMPLATE_PATH = PARTICIPATION_NAF_TEMPLATE_PATH
     elif cert_type == "finance-champion":
         TEMPLATE_PATH = FINANCE_CHAMPION_TEMPLATE_PATH
     elif cert_type == "finance-first":
