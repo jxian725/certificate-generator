@@ -64,8 +64,13 @@ async def generate_cert(participant_id: int, db: Session = Depends(get_db)):
             "blob": image_base64
         }
 
+    if participant.cert_type == "participant-naf":
+        cert_prefix = "HDC251218"
+    else:
+        cert_prefix = "HDC251120"
+
     # Generate cert serial
-    cert_no = f"HDC251120{str(uuid4())[:8].upper()}"
+    cert_no = f"{cert_prefix}{str(uuid4())[:8].upper()}"
 
     # Create PDF
     pdf_bytes = generate_certificate(participant.name, cert_no, participant.cert_type)
